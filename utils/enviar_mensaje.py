@@ -265,3 +265,131 @@ def enviar_mensaje_telefonos(driver, numero, mensaje):
         # Manejo de errores en caso de que algo falle (por ejemplo, número inválido)
         print(f"⚠️ Algo salio mal enviando el mensaje!  :( {str(e)}")
         return False, f"⚠️ Error al enviar mensaje: {str(e)}"
+
+def enviar_mensaje_a_grupo(browser, group, mensaje, ruta_imagen=None, enviar_documento=False, ruta_documento=None):
+    try:
+        print(f"\nGrupo en proceso: {group}")
+        print("Buscando grupo...")
+        search_xpath = '//div[@contenteditable="true"][@data-tab="3"]'
+        search_box = WebDriverWait(browser, 30).until(
+            EC.presence_of_element_located((By.XPATH, search_xpath))
+        )
+
+        search_box.clear()
+        pyperclip.copy(group)
+        search_box.send_keys(Keys.SHIFT, Keys.INSERT)
+        time.sleep(2)
+
+        group_xpath = f'//span[@title="{group}"]'
+        group_title = WebDriverWait(browser, 10).until(
+            EC.element_to_be_clickable((By.XPATH, group_xpath))
+        )
+        group_title.click()
+        time.sleep(2)
+
+        # Caso: Solo mensaje
+        # Solo mensaje
+        if not ruta_imagen and not enviar_documento:
+            print("Solo se enviará mensaje de texto...")
+            campo_mensaje = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//footer//div[@contenteditable="true"]'))
+            )
+            pyperclip.copy(mensaje)
+            campo_mensaje.click()
+            campo_mensaje.send_keys(Keys.SHIFT, Keys.INSERT)
+            time.sleep(1)
+            campo_mensaje.send_keys(Keys.ENTER)
+            print("✅ Mensaje enviado")
+            return True, "Mensaje enviado"
+
+
+        # Adjuntar imagen (y escribir mensaje como comentario)
+        if ruta_imagen:
+            print("Adjuntando imagen...")
+            attachment_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//button[.//span[@data-icon="plus-rounded"]]'))
+            )
+            browser.execute_script("arguments[0].click();", attachment_btn)
+
+            image_input = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//input[@accept="image/*,video/mp4,video/3gpp,video/quicktime"]'))
+            )
+            image_input.send_keys(ruta_imagen)
+            time.sleep(1)
+
+            comentario_box = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-lexical-editor="true"]'))
+            )
+            pyperclip.copy(mensaje)
+            comentario_box.send_keys(Keys.SHIFT, Keys.INSERT)
+
+            send_img_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//div[@role="button"]//span[@data-icon="wds-ic-send-filled"]/ancestor::div[@role="button"]'))
+            )
+            browser.execute_script("arguments[0].click();", send_img_btn)
+            print("✅ Imagen con mensaje enviada")
+            time.sleep(random.uniform(2, 3))
+
+        # Adjuntar documento
+        if ruta_imagen and enviar_documento and ruta_documento:
+            print("Adjuntando archivo...")
+            attachment_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//button[.//span[@data-icon="plus-rounded"]]'))
+            )
+            browser.execute_script("arguments[0].click();", attachment_btn)
+            time.sleep(1)
+
+            doc_input = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//input[@accept="*"]'))
+            )
+            doc_input.send_keys(ruta_documento)
+            time.sleep(2)
+
+            send_doc_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//div[@role="button"]//span[@data-icon="wds-ic-send-filled"]/ancestor::div[@role="button"]'))
+            )
+            browser.execute_script("arguments[0].click();", send_doc_btn)
+            print("✅ Archivo enviado")
+            time.sleep(random.uniform(2, 3))
+
+        if not ruta_imagen and enviar_documento and ruta_documento:
+            print("Adjuntando archivo...")
+            
+            # 1. Clic en clip
+            attachment_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//button[.//span[@data-icon="plus-rounded"]]'))
+            )
+            browser.execute_script("arguments[0].click();", attachment_btn)
+            time.sleep(1)
+
+            # 2. Adjuntar archivo
+            doc_input = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//input[@accept="*"]'))
+            )
+            doc_input.send_keys(ruta_documento)
+            time.sleep(2)
+
+            # 3. Esperar el cuadro de texto del preview del archivo (donde puedes escribir el mensaje)
+            print("Escribiendo mensaje en preview del documento...")
+            preview_textbox = WebDriverWait(browser, 10).until(
+                EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-lexical-editor="true"]'))
+            )
+            pyperclip.copy(mensaje)
+            preview_textbox.click()
+            preview_textbox.send_keys(Keys.SHIFT, Keys.INSERT)
+            time.sleep(1)
+
+            # 4. Enviar
+            send_btn = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.XPATH, '//div[@role="button"]//span[@data-icon="wds-ic-send-filled"]/ancestor::div[@role="button"]'))
+            )
+            browser.execute_script("arguments[0].click();", send_btn)
+            print("✅ Archivo con mensaje enviado")
+            time.sleep(random.uniform(2, 3))
+
+
+        return True, "Contenido enviado correctamente"
+
+    except Exception as e:
+        print(f"⚠️ Error al enviar al grupo {group}: {str(e)}")
+        return False, f"⚠️ Error: {str(e)}"

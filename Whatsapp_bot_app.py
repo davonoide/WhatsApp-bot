@@ -1,27 +1,7 @@
-# pip install selenium
-from selenium import webdriver
-
-# Submodulos
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.keys import Keys
-
-# configuracion de ChromeDriver --pip install webdriver-manager
-from webdriver_manager.chrome import ChromeDriverManager
-
-# Para interactuar con la web
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException # Evita que el bot se trabe si tarda algo
-
-import time # Para usar temporizador
-import urllib.parse # Modifica URLs sin errores
-import random
-import pyperclip
-
 import flet as ft
 from controllers.enviar_telefonos import ComponenteEnviarTelefonos
+from controllers.enviar_grupos import ComponenteEnviarGrupos
+from controllers.enviar_todos import ComponenteEnviarTodos
 
 def main(page: ft.Page):
     page.title = "Interfaz Chatbot"
@@ -38,9 +18,9 @@ def main(page: ft.Page):
         if seleccion == "Bot para enviar a telefonos":
             contenido_dinamico.controls.append(ComponenteEnviarTelefonos(page))
         elif seleccion == "Bot para enviar a grupos":
-            contenido_dinamico.controls.append(ft.Text("Formulario para enviar a grupos 👥"))
+            contenido_dinamico.controls.append(ComponenteEnviarGrupos(page))
         elif seleccion == "Bot para enviar a telefonos y grupos":
-            contenido_dinamico.controls.append(ft.Text("Formulario para ambos 🔀"))
+            contenido_dinamico.controls.append(ComponenteEnviarTodos(page))
         else:
             contenido_dinamico.controls.append(ft.Text("Selecciona una opción"))
 
@@ -54,7 +34,7 @@ def main(page: ft.Page):
             ft.dropdown.Option("Bot para enviar a telefonos y grupos"),
         ],
         on_change=dropdown_changed,
-        width=300
+        width=400
     )
 
     page.add(dropdown, contenido_dinamico)
