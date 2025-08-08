@@ -15,13 +15,13 @@ def construir_seleccion_archivos(page: ft.Page):
     texto_ruta_txt = ft.Text("No se ha seleccionado archivo TXT.", size=14, color=ft.Colors.WHITE)
     mensaje_contenido = ft.Text("", size=14, selectable=True, color=ft.Colors.WHITE)
 
-    contenedor_ruta_csv = ft.Container(texto_ruta_csv, height=60, padding=10, bgcolor=ft.colors.with_opacity(0.1, ft.colors.WHITE), border_radius=8, border=ft.border.all(1, ft.Colors.GREY_700))
-    contenedor_ruta_txt = ft.Container(texto_ruta_txt, height=60, padding=10, bgcolor=ft.colors.with_opacity(0.1, ft.colors.WHITE), border_radius=8, border=ft.border.all(1, ft.Colors.GREY_700))
-    contenedor_mensaje = ft.Container(ft.Column([mensaje_contenido], scroll=ft.ScrollMode.AUTO), height=300, padding=10, bgcolor=ft.colors.with_opacity(0.1, ft.colors.WHITE), border_radius=10, border=ft.border.all(1, ft.Colors.GREY_700))
+    contenedor_ruta_csv = ft.Container(texto_ruta_csv, padding=10, bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.WHITE), border_radius=8, border=ft.border.all(1, ft.Colors.GREY_700))
+    contenedor_ruta_txt = ft.Container(texto_ruta_txt, padding=10, bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.WHITE), border_radius=8, border=ft.border.all(1, ft.Colors.GREY_700))
+    contenedor_mensaje = ft.Container(ft.Column([mensaje_contenido], scroll=ft.ScrollMode.AUTO), height=300, padding=10, bgcolor=ft.Colors.with_opacity(0.1, ft.Colors.WHITE), border_radius=10, border=ft.border.all(1, ft.Colors.GREY_700))
 
     instrucciones = ft.Text("", size=16, color=ft.Colors.WHITE)
-    boton_confirmar_envio = ft.ElevatedButton(text="Enviar mensaje", icon=ft.icons.SEND, visible=False, disabled=False)
-    boton_iniciar = ft.ElevatedButton(text="Iniciar", icon=ft.icons.START, disabled=True)
+    boton_confirmar_envio = ft.ElevatedButton(text="Enviar mensaje", icon=ft.Icons.SEND, visible=False, disabled=False)
+    boton_iniciar = ft.ElevatedButton(text="Iniciar", icon=ft.Icons.START, disabled=True)
 
     def verificar_todo_listo():
         if archivo_csv and archivo_txt:
