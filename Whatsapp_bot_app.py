@@ -26,6 +26,8 @@ from controllers.enviar_telefonos import ComponenteEnviarTelefonos
 def main(page: ft.Page):
     page.title = "Interfaz Chatbot"
     page.scroll = ft.ScrollMode.AUTO
+    page.window.height = 1280
+
 
     contenido_dinamico = ft.Column()
 

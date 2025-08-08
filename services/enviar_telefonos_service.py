@@ -5,6 +5,7 @@ from utils.validaciones import corregir_numero_cel
 from utils.enviar_mensaje import enviar_mensaje_telefonos as enviar_mensaje
 from utils.lector_csv import cargar_csv, extraer_telefonos
 from utils.lector_de_mensaje import leer_mensaje
+from utils.enviar_mensaje import enviar_mensaje_con_multimedia
 
 def enviar_mensaje_whatsapp(ruta_csv, ruta_txt):
     print("📥 Cargando datos...")
@@ -69,5 +70,29 @@ def enviar_mensaje_whatsapp_directo(ruta_csv, ruta_txt, driver):
     for numero in contactos:
         numero_correcto = corregir_numero_cel(numero)
         exito, resultado = enviar_mensaje_telefonos(driver, numero_correcto, mensaje)
+        print(resultado)
+        time.sleep(random.uniform(2, 4))
+
+def enviar_mensaje_whatsapp_con_multimedia(ruta_csv, ruta_txt, driver, ruta_imagen=None, enviar_documento=False, ruta_documento=None):
+    df = cargar_csv(ruta_csv)
+    if df is None:
+        raise Exception("No se pudo cargar el archivo CSV.")
+
+    contactos = extraer_telefonos(df)
+    if not contactos:
+        raise Exception("No se encontraron teléfonos válidos.")
+
+    mensaje = leer_mensaje(ruta_txt)
+    if not mensaje:
+        raise Exception("No se pudo leer el mensaje.")
+
+    for numero in contactos:
+        numero_correcto = corregir_numero_cel(numero)
+        exito, resultado = enviar_mensaje_con_multimedia(
+            driver, numero_correcto, mensaje,
+            ruta_imagen=ruta_imagen,
+            enviar_documento=enviar_documento,
+            ruta_documento=ruta_documento
+        )
         print(resultado)
         time.sleep(random.uniform(2, 4))

@@ -186,13 +186,13 @@ def enviar_mensaje_con_multimedia(driver, numero, mensaje, ruta_imagen=None, env
             image_input.send_keys(ruta_imagen)
             time.sleep(1)
 
-            # Escribir mensaje como comentario de la imagen
+            """ # Escribir mensaje como comentario de la imagen
             comentario_box = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.XPATH, '//div[@role="textbox" and @data-lexical-editor="true"]'))
             )
             pyperclip.copy(mensaje)
             comentario_box.send_keys(Keys.SHIFT, Keys.INSERT)
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(1, 2)) """
 
             # Enviar imagen con mensaje
             send_btn = WebDriverWait(driver, 10).until(

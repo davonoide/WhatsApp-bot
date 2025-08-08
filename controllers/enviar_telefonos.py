@@ -2,6 +2,8 @@ import flet as ft
 from controllers.inputs_comunes import construir_seleccion_archivos
 from services.enviar_telefonos_service import enviar_mensaje_whatsapp_directo
 from utils.driver import abrir_navegador
+from utils.enviar_mensaje import enviar_mensaje_con_multimedia
+
 
 def ComponenteEnviarTelefonos(page: ft.Page):
     componentes = construir_seleccion_archivos(page)
@@ -27,8 +29,17 @@ def ComponenteEnviarTelefonos(page: ft.Page):
         archivo_csv, archivo_txt = componentes["get_archivos"]()
         driver = componentes["get_driver"]()
 
+        enviar_imagen, enviar_documento = componentes["get_multimedia_flags"]()
+        ruta_imagen, ruta_documento = componentes["get_rutas_extra"]()
+
         try:
-            enviar_mensaje_whatsapp_directo(archivo_csv, archivo_txt, driver)
+            from services.enviar_telefonos_service import enviar_mensaje_whatsapp_con_multimedia
+            enviar_mensaje_whatsapp_con_multimedia(
+                archivo_csv, archivo_txt, driver,
+                ruta_imagen if enviar_imagen else None,
+                enviar_documento,
+                ruta_documento if enviar_documento else None
+            )
             componentes["instrucciones"].value = "✅ Mensajes enviados correctamente."
         except Exception as ex:
             componentes["instrucciones"].value = f"❌ Error: {str(ex)}"
@@ -45,14 +56,32 @@ def ComponenteEnviarTelefonos(page: ft.Page):
 
     return ft.Column([
         ft.Text("Enviar a teléfonos", size=20),
+
+        componentes["fila_switches"],
+        ft.Divider(),
+
+        # Imagen
+        componentes["boton_imagen"],
+        componentes["contenedor_ruta_imagen"],
+        componentes["imagen_preview"],
+        componentes["divider_imagen"], 
+
+        # Archivo
+        componentes["boton_documento"],
+        componentes["contenedor_ruta_documento"],
+        componentes["divider_documento"], 
+
         componentes["boton_csv"],
         componentes["contenedor_ruta_csv"],
         ft.Divider(),
+
         componentes["boton_txt"],
         componentes["contenedor_ruta_txt"],
         ft.Divider(),
+
         componentes["contenedor_mensaje"],
         ft.Divider(),
+
         componentes["boton_iniciar"],
         componentes["instrucciones"],
         componentes["boton_confirmar_envio"]
